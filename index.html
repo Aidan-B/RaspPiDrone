@@ -190,15 +190,15 @@
       <h3>Attitude</h3>
       <div id="attitude" class="attitudeContainer">
 
-        <div class="attitudeText" id="rollVal">Roll: 1500</div>
+        <div class="attitudeText" id="rollVal">Roll: 0</div>
         <div class="attitude">
           <div class="attitudeBar" id="roll" style="background-color: red;"></div>
         </div>
-        <div class="attitudeText" id="pitchVal">Pitch: 1500</div>
+        <div class="attitudeText" id="pitchVal">Pitch: 0</div>
         <div class="attitude">
           <div class="attitudeBar" id="pitch" style="background-color: green;"></div>
         </div>
-        <div class="attitudeText" id="yawVal">Yaw: 1500</div>
+        <div class="attitudeText" id="yawVal">Yaw: 0</div>
         <div class="attitude">
           <div class="attitudeBar" id="yaw" style="background-color: blue;"></div>
         </div>
@@ -219,9 +219,9 @@
     var keyMap = [];
     document.addEventListener('keydown', function(event) {
       if (event.keyCode == 38) { //up
-        controller.throttle++;
+        controller.throttle += 10;
       } else if (event.keyCode == 40) { //down
-        controller.throttle--;
+        controller.throttle -= 10;
       }
       if (event.keyCode == 87) {// forward
         controller.pitch++;
@@ -261,6 +261,21 @@
         controller.yaw = 1500;
         controller.aux1 = 1000;
         controller.aux4 = 2000; //FAILSAFE
+      }
+      if (controller.aux4 >= 1500) { //make sure failsafe is already enabled before sending these values
+        if (event.keyCode == 190) { // "." (callibrate acc)
+          controller.throttle = 1000;
+          controller.pitch = 1500;
+          controller.roll = 1500;
+          controller.yaw = 1000;
+          alert(callibrating accelerometer);
+        } else if (event.keyCode == 191) { // "/" (callibrate gyro)
+          controller.throttle = 2000;
+          controller.pitch = 1500;
+          controller.roll = 1500;
+          controller.yaw = 1000;
+          alert(callibrating gyro);
+        }
       }
 
     });
