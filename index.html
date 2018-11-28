@@ -217,91 +217,102 @@
       aux4: 2000
     };
     var keyMap = [];
-    document.addEventListener('keydown', function(event) {
-      if (event.keyCode == 38) { //up
-        controller.throttle += 10;
-      } else if (event.keyCode == 40) { //down
-        controller.throttle -= 10;
-      }
-      if (event.keyCode == 87) {// forward
-        controller.pitch++;
-      } else if (event.keyCode == 83) {//backward
-        controller.pitch--;
-      }
-      if (event.keyCode == 68) { //right
-        controller.roll++;
-      } else if (event.keyCode == 65) { //left
-        controller.roll--;
-      }
-      if (event.keyCode == 69) { //yaw right
-        controller.yaw++;
-      } else if (event.keyCode == 81) { //yaw left
-        controller.yaw--;
-      }
-      if (event.keyCode == 13) { //enter key (arm)
-        controller.throttle = 1000;
-        controller.pitch = 1500;
-        controller.roll = 1500;
-        controller.yaw = 1500;
-        controller.aux1 = 2000;
-      }
 
-      if (event.keyCode == 27) { //escape key (disarm)
+
+
+
+
+
+    //Up / Down
+    if (keyMap[38]) { //up
+      controller.throttle += 10;
+    } else if (keyMap[40]) { //down
+      controller.throttle -= 10;
+    }
+
+    //forward / backward
+    if (keyMap[87]) {// forward
+      controller.pitch++;
+    } else if (!keyMap[87]) {
+      controller.pitch = 1500;
+    } else if (keyMap[83]) {//backward
+      controller.pitch--;
+    } else if (!keyMap[83]) {
+        controller.pitch = 1500;
+    }
+
+    if (keyMap[68]) { //right
+      controller.roll++;
+    } else if (!keyMap[68]) {
+      controller.roll = 1500;
+    } else if (keyMap[65]) { //left
+      controller.roll--;
+    } else if (!keyMap[65]) {
+      controller.roll = 1500;
+    }
+
+    if (keyMap[69]) { //yaw right
+      controller.yaw++;
+    } else if (!keyMap[69]) {
+      controller.yaw = 1500;
+    } else if (keyMap[81]) { //yaw left
+      controller.yaw--;
+    } else if (!keyMap[81]) {
+      controller.yaw = 1500;
+    }
+    if (keyMap[13]) { //enter key (arm)
+      controller.throttle = 1000;
+      controller.pitch = 1500;
+      controller.roll = 1500;
+      controller.yaw = 1500;
+      controller.aux1 = 2000;
+    }
+
+    if (keyMap[27]) { //escape key (disarm)
+      controller.throttle = 1000;
+      controller.pitch = 1500;
+      controller.roll = 1500;
+      controller.yaw = 1500;
+      controller.aux1 = 1000;
+      controller.aux4 = 1000; //disable FAILSAFE
+    }
+    if (keyMap[32]) {//Space bar (!!FAILSAFE!!)
+      controller.throttle = 1000;
+      controller.pitch = 1500;
+      controller.roll = 1500;
+      controller.yaw = 1500;
+      controller.aux1 = 1000;
+      controller.aux4 = 2000; //FAILSAFE
+    }
+    if (controller.aux4 >= 1500) { //make sure failsafe is already enabled before sending these values
+      if (keyMap[190]) { // "." (callibrate acc)
         controller.throttle = 1000;
         controller.pitch = 1500;
         controller.roll = 1500;
-        controller.yaw = 1500;
-        controller.aux1 = 1000;
-        controller.aux4 = 1000; //disable FAILSAFE
-      }
-      if (event.keyCode == 32) {//Space bar (!!FAILSAFE!!)
-        controller.throttle = 1000;
+        controller.yaw = 1000;
+      } else if (keyMap[191]) { // "/" (callibrate gyro)
+        controller.throttle = 2000;
         controller.pitch = 1500;
         controller.roll = 1500;
-        controller.yaw = 1500;
-        controller.aux1 = 1000;
-        controller.aux4 = 2000; //FAILSAFE
+        controller.yaw = 1000;
       }
-      if (controller.aux4 >= 1500) { //make sure failsafe is already enabled before sending these values
-        if (event.keyCode == 190) { // "." (callibrate acc)
-          controller.throttle = 1000;
-          controller.pitch = 1500;
-          controller.roll = 1500;
-          controller.yaw = 1000;
-          alert("callibrating accelerometer");
-        } else if (event.keyCode == 191) { // "/" (callibrate gyro)
-          controller.throttle = 2000;
-          controller.pitch = 1500;
-          controller.roll = 1500;
-          controller.yaw = 1000;
-          alert("callibrating gyro");
-        }
-      }
+    }
+    if (!keyMap[13] || !keyMap[27]) { //enter/escape key (arm/disarm)
+      controller.throttle = 1000;
+      controller.pitch = 1500;
+      controller.roll = 1500;
+      controller.yaw = 1500;
+    }
+
+
+
+    document.addEventListener('keydown', function(event) {
+      keyMap[event.keyCode] = true;
 
     });
     document.addEventListener('keyup', function(event) {
-      if (event.keyCode == 87) {// forward
-        controller.pitch = 1500;
-      } else if (event.keyCode == 83) {//backward
-        controller.pitch = 1500;
-      }
-      if (event.keyCode == 68) { //right
-        controller.roll = 1500;
-      } else if (event.keyCode == 65) { //left
-        controller.roll = 1500;
-      }
-      if (event.keyCode == 69) { //yaw right
-        controller.yaw = 1500;
-      } else if (event.keyCode == 81) { //yaw left
-        controller.yaw = 1500;
-      }
+      keyMap[event.keyCode] = false;
 
-      if (event.keyCode == 13 || event.keyCode == 27) { //enter/escape key (arm/disarm)
-        controller.throttle = 1000;
-        controller.pitch = 1500;
-        controller.roll = 1500;
-        controller.yaw = 1500;
-      }
     });
 
     socket.on('attitude', function(data) {
