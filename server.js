@@ -11,7 +11,7 @@ var portLocation = '/dev/ttyUSB0';
 var serialPort = new serialport(portLocation, { baudRate : 115200 });
 
 var dataRate = 200;
-var motorData, attitude, rcData;
+var motorData, attitude, altitude, rcData;
 var controller = {
   throttle: 1000,
   pitch: 1500,
@@ -47,12 +47,16 @@ serialPort.on('open', function () {
     serialPort.write(mspFuncs.MSP_MOTOR(), function (err) {
       //console.log(err);
     });
-    serialPort.write(mspFuncs.MSP_ATTITIDE(), function (err) {
+    serialPort.write(mspFuncs.MSP_ATTITUDE(), function (err) {
       //console.log(err);
     });
     serialPort.write(mspFuncs.MSP_RC(), function (err) {
       //console.log(err);
     });
+    serialPort.write(mspFuncs.MSP_ALTITUDE(), function (err) {
+      //console.log(err);
+    });
+
   }, dataRate);
 
   setInterval(function() {
@@ -81,6 +85,10 @@ serialPort.on('open', function () {
       attitude = {roll: roll, pitch: pitch, yaw: yaw};
       //console.log(attitude);
     }
+    if (data[4] == 109) {//MSP_ALTITUDE
+      altitude = {cm: data.readInt32LE(5), cmps: data.readInt16LE(9)};
+      //console.log(rcData);
+    }
     if (data[4] == 200 && data[4] == data[5]) { //MSP_SET_RAW_RC
       //console.log(JSON.stringify(data));
     }
@@ -106,6 +114,7 @@ io.on('connection', function (socket) {
     socket.emit('motorData', motorData);
     socket.emit('attitude', attitude);
     socket.emit('rcData', rcData);
+    socket.emit('altitude', altitude);
   }, dataRate);
 
   socket.on('RC', function(data) {

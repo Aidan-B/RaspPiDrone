@@ -21,8 +21,12 @@ function int16ToInt8(num) {
 
 module.exports = {
 
-  MSP_ATTITIDE: function() {
+  MSP_ATTITUDE: function() {
     return [36, 77, 60, 0, 108, 108];
+  },
+
+  MSP_ALTITUDE: function() {
+    return [36, 77, 60, 0, 109, 109];
   },
 
   MSP_MOTOR: function() {
